@@ -14,6 +14,7 @@ pub struct Board {
     side_to_move: Color,
     move_number: u16,
     halfmove_count: u16,
+    en_passant_square: Option<Square>,
     white_king: Square,
     black_king: Square,
     castling: [bool; 4],
@@ -85,7 +86,7 @@ impl Board {
             5 => File::F,
             6 => File::G,
             7 => File::H,
-            _ => panic!("Something wrong..."),
+            _ => unreachable!(),
         };
         let k_file = match indices[1] {
             0 => File::A,
@@ -114,6 +115,7 @@ impl Board {
             side_to_move: Color::White,
             move_number: 1,
             halfmove_count: 0,
+            en_passant_square: None,
             white_king: Square::from_file_and_rank(k_file, Rank::First),
             black_king: Square::from_file_and_rank(k_file, Rank::Eighth),
             castling: [true; 4],

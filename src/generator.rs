@@ -23,67 +23,119 @@ pub fn generate_pseudo_legal_moves(board: Board) -> Vec<Move> {
         match board.get_piece(s) {
             Some(p) if p.get_color() == board.get_side_to_move() => {
                 match p.get_kind() {
-                    PieceKind::Pawn => {}
-                    PieceKind::Knight => {}
-                    PieceKind::Bishop => {
+                    PieceKind::Pawn => {
+                        let t1 = s.get_forward(p.get_color()).unwrap();
+                        let t2 = t1.get_forward(p.get_color());
+                        if t2.is_some() {
+                            let t2 = t2.unwrap();
+                            // no need to promotion
+                            if let None = board.get_piece(t1) {
+                                let m = Move::new(p, s, t1, None, None);
+                                res.push(m);
+                                if (s.get_rank() == Rank::Second &&
+                                    p.get_color() == Color::White) ||
+                                   (s.get_rank() == Rank::Seventh &&
+                                    p.get_color() == Color::Black) &&
+                                   board.get_piece(t2).is_none() {
+                                    // move 2 squares from starting position
+                                    let m = Move::new(p, s, t2, None, None);
+                                    res.push(m);
+                                }
+                            }
+                            for d in [Direction::Left, Direction::Right].iter() {
+                                if let Some(t) = t1.get_by_dir(*d) {
+                                    match board.get_piece(t) {
+                                        Some(piece) if piece.get_color() != p.get_color() => {
+                                            let m = Move::new(p, s, t, Some(piece), None);
+                                            res.push(m);
+                                        }
+                                        _ => {}
+                                    }
+                                }
+                            }
+                        } else {
+                            for pr in [PieceKind::Knight,
+                                       PieceKind::Queen,
+                                       PieceKind::Rook,
+                                       PieceKind::Queen]
+                                          .iter() {
+                                if let None = board.get_piece(t1) {
+                                    let m = Move::new(p, s, t1, None, Some(*pr));
+                                    res.push(m);
+                                }
+                                for d in [Direction::Left, Direction::Right].iter() {
+                                    if let Some(t) = t1.get_by_dir(*d) {
+                                        match board.get_piece(t) {
+                                            Some(piece) if piece.get_color() != p.get_color() => {
+                                                let m = Move::new(p, s, t, Some(piece), Some(*pr));
+                                                res.push(m);
+                                            }
+                                            _ => {}
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    PieceKind::Knight => {
+                        for t in s.get_knight_moves() {
+                            if let Some(piece) = board.get_piece(t) {
+                                if piece.get_color() != p.get_color() {
+                                    let m = Move::new(p, s, t, Some(piece), None);
+                                    res.push(m);
+                                }
+                            } else {
+                                let m = Move::new(p, s, t, None, None);
+                                res.push(m);
+                            }
+                        }
+                    }
+                    PieceKind::Bishop | PieceKind::Rook | PieceKind::Queen => {
+                        let dirs: &[Direction] = match p.get_kind() {
+                            PieceKind::Bishop => &bishop_dirs,
+                            PieceKind::Rook => &rook_dirs,
+                            PieceKind::Queen => &queen_dirs,
+                            _ => unreachable!(),
+                        };
                         let mut t;
-                        for d in &bishop_dirs {
+                        for d in dirs {
                             t = s;
                             while let Some(u) = t.get_by_dir(*d) {
                                 t = u;
                                 if let Some(piece) = board.get_piece(t) {
                                     if piece.get_color() != p.get_color() {
-                                        let m = Move::new(p, s, t, Some(piece));
+                                        let m = Move::new(p, s, t, Some(piece), None);
                                         res.push(m);
                                     }
                                     break;
+                                } else {
+                                    let m = Move::new(p, s, t, None, None);
+                                    res.push(m);
                                 }
-                                let m = Move::new(p, s, t, None);
-                                res.push(m);
                             }
                         }
                     }
-                    PieceKind::Rook => {
-                        let mut t;
-                        for d in &rook_dirs {
-                            t = s;
-                            while let Some(u) = t.get_by_dir(*d) {
-                                t = u;
-                                if let Some(piece) = board.get_piece(t) {
-                                    if piece.get_color() != p.get_color() {
-                                        let m = Move::new(p, s, t, Some(piece));
-                                        res.push(m);
-                                    }
-                                    break;
-                                }
-                                let m = Move::new(p, s, t, None);
-                                res.push(m);
-                            }
-                        }
-                    }
-                    PieceKind::Queen => {
-                        let mut t;
+                    PieceKind::King => {
                         for d in &queen_dirs {
-                            t = s;
-                            while let Some(u) = t.get_by_dir(*d) {
-                                t = u;
+                            if let Some(t) = s.get_by_dir(*d) {
                                 if let Some(piece) = board.get_piece(t) {
                                     if piece.get_color() != p.get_color() {
-                                        let m = Move::new(p, s, t, Some(piece));
+                                        let m = Move::new(p, s, t, Some(piece), None);
                                         res.push(m);
                                     }
-                                    break;
+                                } else {
+                                    let m = Move::new(p, s, t, None, None);
+                                    res.push(m);
                                 }
-                                let m = Move::new(p, s, t, None);
-                                res.push(m);
+
                             }
                         }
                     }
-                    PieceKind::King => {}
                 }
             }
             _ => {}
         }
     }
+    // TODO: Castling and en passant
     res
 }

@@ -167,6 +167,35 @@ impl Square {
         }
     }
 
+    pub fn get_knight_moves(&self) -> Vec<Square> {
+        let mut res = Vec::new();
+        if self.get_rank() <= Rank::Sixth && self.get_file() != File::H {
+            res.push(Square(self.0 + 17));
+        }
+        if self.get_rank() <= Rank::Sixth && self.get_file() != File::A {
+            res.push(Square(self.0 + 15));
+        }
+        if self.get_rank() >= Rank::Third && self.get_file() != File::H {
+            res.push(Square(self.0 - 15));
+        }
+        if self.get_rank() >= Rank::Third && self.get_file() != File::A {
+            res.push(Square(self.0 - 17));
+        }
+        if self.get_rank() != Rank::Eighth && self.get_file() <= File::F {
+            res.push(Square(self.0 + 10));
+        }
+        if self.get_rank() != Rank::Eighth && self.get_file() >= File::C {
+            res.push(Square(self.0 + 6));
+        }
+        if self.get_rank() != Rank::First && self.get_file() <= File::F {
+            res.push(Square(self.0 - 6));
+        }
+        if self.get_rank() != Rank::First && self.get_file() >= File::C {
+            res.push(Square(self.0 - 10));
+        }
+        res
+    }
+
     pub fn get_by_dir(&self, dir: Direction) -> Option<Square> {
         match dir {
             Direction::Up => self.get_up(),

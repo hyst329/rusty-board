@@ -42,4 +42,8 @@ fn test_adjacent() {
     assert_eq!(a1.get_down(), None);
     assert_eq!(a1.get_left(), None);
     assert_eq!(a1.get_right(), Some(b1));
+
+    assert_eq!(e5.get_knight_moves().len(), 8);
+    assert_eq!(h8.get_knight_moves().len(), 2);
+    assert_eq!(b1.get_knight_moves().len(), 3);
 }
