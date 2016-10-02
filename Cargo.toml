@@ -1,0 +1,6 @@
+[package]
+name = "rusty-board"
+version = "0.0.1"
+authors = ["hyst329 <trolleybus.1329@gmail.com>"]
+
+[dependencies]
