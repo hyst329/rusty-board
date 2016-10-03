@@ -6,10 +6,8 @@ use ::square::*;
 pub fn generate_pseudo_legal_moves(board: Board) -> Vec<Move> {
     let mut res = Vec::new();
     let rook_dirs = [Direction::Up, Direction::Down, Direction::Left, Direction::Right];
-    let bishop_dirs = [Direction::UpLeft,
-                       Direction::UpRight,
-                       Direction::DownLeft,
-                       Direction::DownRight];
+    let bishop_dirs =
+        [Direction::UpLeft, Direction::UpRight, Direction::DownLeft, Direction::DownRight];
     let queen_dirs = [Direction::Up,
                       Direction::Down,
                       Direction::Left,
@@ -55,10 +53,10 @@ pub fn generate_pseudo_legal_moves(board: Board) -> Vec<Move> {
                             }
                         } else {
                             for pr in [PieceKind::Knight,
-                                       PieceKind::Queen,
+                                       PieceKind::Bishop,
                                        PieceKind::Rook,
                                        PieceKind::Queen]
-                                          .iter() {
+                                .iter() {
                                 if let None = board.get_piece(t1) {
                                     let m = Move::new(p, s, t1, None, Some(*pr));
                                     res.push(m);
