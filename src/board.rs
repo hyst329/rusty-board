@@ -14,9 +14,10 @@ pub enum CastlingRights {
     BlackQueenside,
 }
 
+#[derive(Clone)]
 /// The main data type for chessboard
 pub struct Board {
-    board: [Option<Piece>; 64],
+    board: Vec<Option<Piece>>,
     side_to_move: Color,
     move_number: u16,
     halfmove_count: u16,
@@ -121,7 +122,7 @@ impl Board {
             _ => unreachable!(),
         };
         Board {
-            board: board,
+            board: board.to_vec(),
             side_to_move: Color::White,
             move_number: 1,
             halfmove_count: 0,
@@ -146,5 +147,69 @@ impl Board {
         self.side_to_move
     }
 
-    pub fn do_move_inplace(&mut self, m: Move) {}
+    /// Makes a move on the board. Returns `Ok(())` if the move succeeds and `Err` otherwise.
+    /// This method _modifies_ the original board.
+    pub fn do_move_inplace(&mut self, m: Move) -> Result<(), &'static str> {
+        let from = m.get_square_from();
+        let to = m.get_square_to();
+        if let None = self.get_piece(from) {
+            return Err("Empty starting square");
+        }
+        let p = self.get_piece(from).unwrap();
+        if p != m.get_moving_piece() {
+            return Err("Wrong moving piece");
+        }
+        if self.get_piece(to) != m.get_captured_piece() {
+            return Err("Wrong captured piece");
+        }
+        self.board[from.as_index()] = None;
+        self.board[to.as_index()] = if m.get_promoted_to().is_some() {
+            Some(Piece::new(m.get_promoted_to().unwrap(), p.get_color()))
+        } else {
+            Some(p)
+        };
+        self.move_list.push(m);
+        Ok(())
+    }
+
+
+    /// Makes a move on the board, like `do_move_inplace()`, but returns _new_ (cloned) board.
+    pub fn do_move(&self, m: Move) -> Result<Board, &'static str> {
+        let mut c = self.clone();
+        try!(c.do_move_inplace(m));
+        Ok(c)
+    }
+
+    /// Undoes the last move made. Returns `Ok(())` on success and `Err` otherwise
+    /// (for example, when it is nothing to undo or the move list is somehow corrupted).
+    /// This method _modifies_ the original board.
+    pub fn undo_move_inplace(&mut self) -> Result<(), &'static str> {
+        if let Some(m) = self.move_list.pop() {
+            let from = m.get_square_from();
+            let to = m.get_square_to();
+            self.board[to.as_index()] = m.get_captured_piece();
+            let p = m.get_moving_piece();
+            if self.board[to.as_index()] != Some(p) {
+                return Err("Square occupied with wrong piece!");
+            }
+            if let Some(_) = self.board[from.as_index()] {
+                return Err("Starting square somehow occupied");
+            }
+            self.board[from.as_index()] = if m.get_promoted_to().is_some() {
+                Some(Piece::new(PieceKind::Pawn, p.get_color()))
+            } else {
+                Some(p)
+            };
+            Ok(())
+        } else {
+            Err("Nothing to undo")
+        }
+    }
+
+    /// Undoes the last move made, like `undo_move_inplace()`, but returns _new_ (cloned) board.
+    pub fn undo_move(&self) -> Result<Board, &'static str> {
+        let mut c = self.clone();
+        try!(c.undo_move_inplace());
+        Ok(c)
+    }
 }

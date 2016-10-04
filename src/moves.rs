@@ -1,7 +1,7 @@
 use ::square::*;
 use ::piece::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Move {
     moving_piece: Piece,
     from: Square,
