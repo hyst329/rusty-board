@@ -25,4 +25,20 @@ impl Move {
             promoted_to: promoted_to,
         }
     }
+
+    pub fn get_moving_piece(&self) -> Piece {
+        self.moving_piece
+    }
+    pub fn get_square_from(&self) -> Square {
+        self.from
+    }
+    pub fn get_square_to(&self) -> Square {
+        self.to
+    }
+    pub fn get_captured_piece(&self) -> Option<Piece> {
+        self.captured_piece
+    }
+    pub fn get_promoted_to(&self) -> Option<PieceKind> {
+        self.promoted_to
+    }
 }

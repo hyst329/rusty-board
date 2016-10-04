@@ -2,13 +2,19 @@ use ::square::*;
 use ::piece::*;
 use ::moves::*;
 
+/// Represents different castlings for different sides
 pub enum CastlingRights {
+    /// White can castle kingside
     WhiteKingside,
+    /// White can castle queenside
     WhiteQueenside,
+    /// Black can castle kingside
     BlackKingside,
+    /// Black can castle queenside
     BlackQueenside,
 }
 
+/// The main data type for chessboard
 pub struct Board {
     board: [Option<Piece>; 64],
     side_to_move: Color,
@@ -25,10 +31,14 @@ pub struct Board {
 }
 
 impl Board {
+    /// Constructs a new chessboard with starting position.
+    /// Equivalent to `Board::new_chess960(518)`.
     pub fn new() -> Board {
         Board::new_chess960(518)
     }
-
+    /// Constructs a new chessboard with Chess960 starting position number `position_number`.
+    /// Position numbers are treated modulo 960
+    /// (i. e. #960, #961, #962 are equivalent to #0, #1, #2 etc.)
     pub fn new_chess960(position_number: u32) -> Board {
         let n1 = position_number % 960;
         let mut piece_order = [PieceKind::Pawn; 8];
@@ -126,11 +136,15 @@ impl Board {
         }
     }
 
+    /// Returns piece on a given square or `None` if the square is empty.
     pub fn get_piece(&self, sq: Square) -> Option<Piece> {
         self.board[sq.as_index()]
     }
 
+    /// Returns which side is to move now.
     pub fn get_side_to_move(&self) -> Color {
         self.side_to_move
     }
+
+    pub fn do_move_inplace(&mut self, m: Move) {}
 }
