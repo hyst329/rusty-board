@@ -8,6 +8,7 @@ pub struct Move {
     to: Square,
     captured_piece: Option<Piece>,
     promoted_to: Option<PieceKind>,
+    en_passant: bool,
 }
 
 impl Move {
@@ -15,7 +16,8 @@ impl Move {
                from: Square,
                to: Square,
                captured_piece: Option<Piece>,
-               promoted_to: Option<PieceKind>)
+               promoted_to: Option<PieceKind>,
+               en_passant: bool)
                -> Move {
         Move {
             moving_piece: moving_piece,
@@ -23,6 +25,7 @@ impl Move {
             to: to,
             captured_piece: captured_piece,
             promoted_to: promoted_to,
+            en_passant: en_passant,
         }
     }
 
