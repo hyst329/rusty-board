@@ -159,7 +159,7 @@ impl Board {
         if p != m.get_moving_piece() {
             return Err("Wrong moving piece");
         }
-        if self.get_piece(to) != m.get_captured_piece() {
+        if self.get_piece(to) != m.get_captured_piece() && !m.is_en_passant() {
             return Err("Wrong captured piece");
         }
         self.board[from.as_index()] = None;

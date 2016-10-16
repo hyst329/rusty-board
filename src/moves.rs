@@ -9,6 +9,7 @@ pub struct Move {
     captured_piece: Option<Piece>,
     promoted_to: Option<PieceKind>,
     en_passant: bool,
+    castling: bool,
 }
 
 impl Move {
@@ -17,7 +18,8 @@ impl Move {
                to: Square,
                captured_piece: Option<Piece>,
                promoted_to: Option<PieceKind>,
-               en_passant: bool)
+               en_passant: bool,
+               castling: bool)
                -> Move {
         Move {
             moving_piece: moving_piece,
@@ -26,6 +28,7 @@ impl Move {
             captured_piece: captured_piece,
             promoted_to: promoted_to,
             en_passant: en_passant,
+            castling: castling,
         }
     }
 
@@ -43,5 +46,11 @@ impl Move {
     }
     pub fn get_promoted_to(&self) -> Option<PieceKind> {
         self.promoted_to
+    }
+    pub fn is_en_passant(&self) -> bool {
+        self.en_passant
+    }
+    pub fn is_castling(&self) -> bool {
+        self.castling
     }
 }
