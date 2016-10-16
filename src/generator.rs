@@ -7,17 +7,17 @@ pub fn generate_pseudo_legal_moves(board: Board) -> Vec<Move> {
     let mut res = Vec::new();
     let rook_dirs = [Direction::Up, Direction::Down, Direction::Left, Direction::Right];
     let bishop_dirs = [Direction::UpLeft,
-                       Direction::UpRight,
-                       Direction::DownLeft,
-                       Direction::DownRight];
+        Direction::UpRight,
+        Direction::DownLeft,
+        Direction::DownRight];
     let queen_dirs = [Direction::Up,
-                      Direction::Down,
-                      Direction::Left,
-                      Direction::Right,
-                      Direction::UpLeft,
-                      Direction::UpRight,
-                      Direction::DownLeft,
-                      Direction::DownRight];
+        Direction::Down,
+        Direction::Left,
+        Direction::Right,
+        Direction::UpLeft,
+        Direction::UpRight,
+        Direction::DownLeft,
+        Direction::DownRight];
     for i in 0..64 {
         let s = Square::from_int(i);
         match board.get_piece(s) {
@@ -34,9 +34,9 @@ pub fn generate_pseudo_legal_moves(board: Board) -> Vec<Move> {
                                 res.push(m);
                                 if (s.get_rank() == Rank::Second &&
                                     p.get_color() == Color::White) ||
-                                   (s.get_rank() == Rank::Seventh &&
-                                    p.get_color() == Color::Black) &&
-                                   board.get_piece(t2).is_none() {
+                                    (s.get_rank() == Rank::Seventh &&
+                                        p.get_color() == Color::Black) &&
+                                        board.get_piece(t2).is_none() {
                                     // move 2 squares from starting position
                                     let m = Move::new(p, s, t2, None, None, false, false);
                                     res.push(m);
@@ -61,10 +61,10 @@ pub fn generate_pseudo_legal_moves(board: Board) -> Vec<Move> {
                             }
                         } else {
                             for pr in [PieceKind::Knight,
-                                       PieceKind::Bishop,
-                                       PieceKind::Rook,
-                                       PieceKind::Queen]
-                                          .iter() {
+                                PieceKind::Bishop,
+                                PieceKind::Rook,
+                                PieceKind::Queen]
+                                .iter() {
                                 if let None = board.get_piece(t1) {
                                     let m = Move::new(p, s, t1, None, Some(*pr), false, false);
                                     res.push(m);
@@ -139,7 +139,6 @@ pub fn generate_pseudo_legal_moves(board: Board) -> Vec<Move> {
                                     let m = Move::new(p, s, t, None, None, false, false);
                                     res.push(m);
                                 }
-
                             }
                         }
                     }
