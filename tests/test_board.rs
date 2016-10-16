@@ -14,9 +14,11 @@ fn test_board() {
         }
     }
     let white_pawn = Piece::new(PieceKind::Pawn, Color::White);
-    let e2 = Square::from_file_and_rank(File::E, Rank::Second);
-    let e4 = Square::from_file_and_rank(File::E, Rank::Fourth);
+    let e2 = Square::from_str("e2").unwrap();
+    let e4 = Square::from_str("e4").unwrap();
     let m = Move::new(white_pawn, e2, e4, None, None, false, false);
     assert_eq!(b.do_move_inplace(m), Ok(()));
     assert_eq!(b.get_piece(e4), Some(white_pawn));
+    let e3 = Square::from_str("e3").unwrap();
+    assert_eq!(b.get_en_passant_square(), Some(e3));
 }

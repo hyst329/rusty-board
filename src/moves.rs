@@ -53,4 +53,7 @@ impl Move {
     pub fn is_castling(&self) -> bool {
         self.castling
     }
+    pub fn is_normal_move(&self) -> bool {
+        !(self.castling || self.en_passant)
+    }
 }

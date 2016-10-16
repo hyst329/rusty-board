@@ -147,6 +147,10 @@ impl Board {
         self.side_to_move
     }
 
+    pub fn get_en_passant_square(&self) -> Option<Square> {
+        self.en_passant_square
+    }
+
     /// Makes a move on the board. Returns `Ok(())` if the move succeeds and `Err` otherwise.
     /// This method _modifies_ the original board.
     pub fn do_move_inplace(&mut self, m: Move) -> Result<(), &'static str> {
@@ -162,12 +166,25 @@ impl Board {
         if self.get_piece(to) != m.get_captured_piece() && !m.is_en_passant() {
             return Err("Wrong captured piece");
         }
-        self.board[from.as_index()] = None;
-        self.board[to.as_index()] = if m.get_promoted_to().is_some() {
-            Some(Piece::new(m.get_promoted_to().unwrap(), p.get_color()))
-        } else {
-            Some(p)
-        };
+        if m.is_normal_move() {
+            self.board[from.as_index()] = None;
+            self.board[to.as_index()] = if m.get_promoted_to().is_some() {
+                Some(Piece::new(m.get_promoted_to().unwrap(), p.get_color()))
+            } else {
+                Some(p)
+            };
+            if m.get_moving_piece().get_kind() == PieceKind::Pawn &&
+                (from.as_index() as i16 - to.as_index() as i16).abs() == 16 {
+                let square_index = (from.as_index() + to.as_index()) / 2;
+                self.en_passant_square = Some(Square::from_int(square_index as u32));
+            }
+        }
+        if m.is_castling() {
+            //TODO: Castling move
+        }
+        if m.is_en_passant() {
+            //TODO: En passant move
+        }
         self.move_list.push(m);
         Ok(())
     }

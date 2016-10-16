@@ -66,6 +66,36 @@ impl Square {
         Square(file as u8 + 8 * rank as u8)
     }
 
+    pub fn from_str(string: &str) -> Option<Square> {
+        let mut chars = string.chars();
+        let file = match chars.next() {
+            Some('a') => File::A,
+            Some('b') => File::B,
+            Some('c') => File::C,
+            Some('d') => File::D,
+            Some('e') => File::E,
+            Some('f') => File::F,
+            Some('g') => File::G,
+            Some('h') => File::H,
+            _ => return None,
+        };
+        let rank = match chars.next() {
+            Some('1') => Rank::First,
+            Some('2') => Rank::Second,
+            Some('3') => Rank::Third,
+            Some('4') => Rank::Fourth,
+            Some('5') => Rank::Fifth,
+            Some('6') => Rank::Sixth,
+            Some('7') => Rank::Seventh,
+            Some('8') => Rank::Eighth,
+            _ => return None,
+        };
+        match chars.next() {
+            None => return Some(Square::from_file_and_rank(file, rank)),
+            _ => return None,
+        }
+    }
+
     pub fn get_file(&self) -> File {
         match self.0 % 8 {
             0 => File::A,
